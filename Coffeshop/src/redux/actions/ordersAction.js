@@ -11,3 +11,12 @@ const getOrderList = () => (dispatch) => {
 };
 
 export default getOrderList;
+
+export const addOrderList = (dispatch) => (data) => {
+  orderService.addOrderToList(data).then((resp) => {
+    dispatch({
+      type: actionTypes.CREATE_ORDER_LIST,
+      payload: data,
+    });
+  });
+};

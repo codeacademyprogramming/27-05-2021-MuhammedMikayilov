@@ -32,7 +32,7 @@ function Coffees() {
     <Box width="1024px" margin="0 auto" marginTop="50px">
       <Row>
         {coffees.map((coffe) => (
-          <Col md="4">
+          <Col md="4" key={coffe.id}>
             <Card className={`${classes.root} mt-5`} key={coffe.id}>
               <CardActionArea>
                 <CardMedia
@@ -44,16 +44,12 @@ function Coffees() {
                   <Typography gutterBottom variant="h5" component="h2">
                     {coffe.name}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
+                  <Typography variant="body2" color="textSecondary">
                     {coffe.ingredients.map((ingredient) => ingredient + " ")}
                   </Typography>
                   <Typography
                     gutterBottom
-                    variant="span"
+                    variant="h6"
                     className="text-danger"
                     style={{ fontSize: "24px" }}
                   >

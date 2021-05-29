@@ -8,6 +8,10 @@ class OrderService extends HttpClient {
   getOrderList() {
     return this.get("orders");
   }
+
+  addOrderToList(body) {
+    return this.post("orders", body);
+  }
 }
 
 export const orderService = new OrderService();

@@ -79,34 +79,37 @@ function OrderList() {
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                <StyledTableCell align="right">Calories</StyledTableCell>
-                <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                <StyledTableCell align="right">
-                  Protein&nbsp;(g)
-                </StyledTableCell>
+                <StyledTableCell>#</StyledTableCell>
+                <StyledTableCell align="right">Order Name</StyledTableCell>
+                <StyledTableCell align="right">Order Count</StyledTableCell>
+                <StyledTableCell align="right">Special Notes</StyledTableCell>
+                <StyledTableCell align="right">Order Price</StyledTableCell>
+                <StyledTableCell align="right">Order STATUS</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((row) => (
+              {orders.map((row, idx) => (
                 <StyledTableRow key={row.name}>
                   <StyledTableCell component="th" scope="row">
-                    {/* {row.name} */}
-                    {row.id}
+                    {idx + 1}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">{row.name}</StyledTableCell>
+                  <StyledTableCell align="right">{row.count}</StyledTableCell>
+                  <StyledTableCell align="right">{row.special}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    {row.price} Azn
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {/* {row.calories} */}
-                    {row.name}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {/* {row.fat} */}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {/* {row.carbs} */}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {/* {row.protein} */}
+                    <Typography
+                      variant="body2"
+                      className={`${
+                        row.status === "CREATED"
+                          ? "text-success"
+                          : "text-danger"
+                      }`}
+                    >
+                      {row.status}
+                    </Typography>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

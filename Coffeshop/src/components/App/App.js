@@ -14,11 +14,12 @@ function App() {
       <Header />
       <Switch>
         <Route path="/" exact>
-          <Coffees />
-        </Route>
-        <Route path="/order_list" exact>
           <OrderList />
         </Route>
+        <Route path="/coffees" exact>
+          <Coffees />
+        </Route>
+
         <Redirect to="/" />
       </Switch>
     </Router>

@@ -7,11 +7,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Slide from "@material-ui/core/Slide";
-import { ClosedCaption } from "@material-ui/icons";
 import { Box, FormGroup } from "@material-ui/core";
 import getCoffeList from "../../../redux/actions/coffeListAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Form, Label, Input } from "reactstrap";
+import { addOrderList } from "../../../redux/actions/ordersAction";
+import { useHistory } from "react-router";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -30,17 +32,22 @@ function ModalOrder({ title, coffeType, format }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [inputVal, setInputVal] = React.useState({
-    select: "Black",
+    name: "Black",
     count: 0,
     special: "",
     price: 0,
+    status: "CREATED",
   });
+  const history = useHistory();
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleSubmit = () => {
+    const addOrder = addOrderList(dispatch);
+    addOrder(inputVal);
+    history.push("/");
     setOpen(false);
   };
 
@@ -48,9 +55,12 @@ function ModalOrder({ title, coffeType, format }) {
     const { value, name } = e.target;
 
     setInputVal({ ...inputVal, [name]: value });
-    if (name === "select") {
+    if (name === "name") {
       let price = coffees.find((coffe) => coffe.name === value).price;
-      setInputVal({ ...inputVal, select: value, price: price });
+      setInputVal({ ...inputVal, name: value, price: price });
+    }
+    if (name === "count") {
+      setInputVal({ ...inputVal, count: Number(value) });
     }
   };
 
@@ -58,10 +68,14 @@ function ModalOrder({ title, coffeType, format }) {
 
   React.useEffect(() => {
     if (coffeType !== null) {
-      setInputVal({ ...inputVal, price: coffeType.price });
+      setInputVal({
+        ...inputVal,
+        name: coffeType.name,
+        price: coffeType.price,
+      });
     }
     getCoffeList()(dispatch);
-  }, []);
+  }, [coffeType, dispatch]);
 
   const { coffees } = useSelector((state) => state.coffeList);
 
@@ -73,7 +87,7 @@ function ModalOrder({ title, coffeType, format }) {
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClose}
+        onClose={handleSubmit}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -81,15 +95,15 @@ function ModalOrder({ title, coffeType, format }) {
             <IconButton
               edge="start"
               color="inherit"
-              onClick={handleClose}
+              onClick={() => setOpen(false)}
               aria-label="close"
             >
-              <ClosedCaption />
+              <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
               {format}
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose}>
+            <Button autoFocus color="inherit" onClick={handleSubmit}>
               {format} Order
             </Button>
           </Toolbar>
@@ -115,7 +129,7 @@ function ModalOrder({ title, coffeType, format }) {
                     <Label for="exampleSelect">Coffe Type</Label>
                     <Input
                       type="select"
-                      name="select"
+                      name="name"
                       id="exampleSelect"
                       onChange={handleChange}
                     >
@@ -170,7 +184,7 @@ function ModalOrder({ title, coffeType, format }) {
                   variant="contained"
                   autoFocus
                   color="primary"
-                  onClick={handleClose}
+                  onClick={handleSubmit}
                 >
                   Create Order
                 </Button>

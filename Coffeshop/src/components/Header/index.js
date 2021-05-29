@@ -7,8 +7,6 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
-  NavbarText,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 function Header() {
@@ -21,7 +19,11 @@ function Header() {
         <div>
           <Navbar color="transparent" light expand="md">
             <NavbarBrand href="/">
-              <img src={process.env.PUBLIC_URL + "starbucks.png"} width="50" />
+              <img
+                src={process.env.PUBLIC_URL + "starbucks.png"}
+                width="50"
+                alt="logo"
+              />
               Starbucks
             </NavbarBrand>
             <NavbarToggler onClick={toggle} />
