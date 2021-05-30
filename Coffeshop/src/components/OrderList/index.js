@@ -13,6 +13,7 @@ import getOrderList, {
   updateOrderItem,
 } from "../../redux/actions/ordersAction";
 import { useDispatch, useSelector } from "react-redux";
+import EditOrder from "./EditModal";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -104,13 +105,7 @@ function OrderList() {
                           marginRight="20px"
                           onClick={() => setEdit(true)}
                         >
-                          <ModalOrder
-                            title="Edit"
-                            coffeType={null}
-                            format="Edit"
-                            editable={row}
-                            edit={edit}
-                          />
+                          <EditOrder item={row} />
                         </Box>
                       )}
                       <Typography

@@ -26,7 +26,6 @@ const orderReducer = (state = { orders: [] }, action) => {
       return {
         ...state.orders,
         orders: state.orders.map((order) => {
-          console.log(action.payload, order);
           if (order.id === action.payload.id) {
             return {
               ...action.payload,

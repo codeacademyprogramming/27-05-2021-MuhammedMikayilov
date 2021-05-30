@@ -11,7 +11,7 @@ import { Box, FormGroup } from "@material-ui/core";
 import getCoffeList from "../../../redux/actions/coffeListAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Form, Label, Input } from "reactstrap";
-import { addOrderList, updateOrder } from "../../../redux/actions/ordersAction";
+import { updateOrder } from "../../../redux/actions/ordersAction";
 import { useHistory } from "react-router";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
@@ -28,15 +28,15 @@ const useStyles = makeStyles((theme) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-function ModalOrder({ title, coffeType, format, editable, edit }) {
+function EditOrder({ item }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [inputVal, setInputVal] = React.useState({
-    name: "",
-    count: 0,
-    special: "",
-    price: 0,
-    status: "CREATED",
+    name: item?.name,
+    count: item?.count,
+    special: item?.special,
+    price: item?.price,
+    status: item?.status,
   });
   const history = useHistory();
 
@@ -45,28 +45,13 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
   };
 
   const handleSubmit = () => {
-    if (edit) {
-      const updateOrderList = updateOrder(dispatch);
-      updateOrderList(editable.id, inputVal);
-    } else {
-      const addOrder = addOrderList(dispatch);
-      addOrder(inputVal);
-      history.push("/");
-    }
+    const updateOrderList = updateOrder(dispatch);
+    updateOrderList(item.id, inputVal);
     setOpen(false);
   };
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-
-    // setInputVal({
-    //   ...inputVal,
-    //   name: editable?.name,
-    //   count: editable?.count,
-    //   special: editable?.special,
-    //   price: editable?.price,
-    //   status: editable?.status,
-    // });
 
     setInputVal({ ...inputVal, [name]: value });
     if (name === "name") {
@@ -80,23 +65,15 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    if (coffeType !== null) {
-      setInputVal({
-        ...inputVal,
-        name: coffeType.name,
-        price: coffeType.price,
-      });
-    }
-
     getCoffeList()(dispatch);
-  }, [coffeType, dispatch]);
+  }, [dispatch]);
 
   const { coffees } = useSelector((state) => state.coffeList);
 
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        {title}
+        Edit
       </Button>
       <Dialog
         fullScreen
@@ -114,9 +91,8 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
             >
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6">{format}</Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
-              {format} Order
+              Edit Order
             </Button>
           </Toolbar>
         </AppBar>
@@ -125,36 +101,23 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
           <Form>
             <Row>
               <Col md="6">
-                {coffeType !== null ? (
-                  <>
-                    <Label for="default">Coffe Type</Label>
-                    <Input
-                      type="text"
-                      name="default"
-                      id="default"
-                      disabled
-                      value={coffeType?.name}
-                    ></Input>
-                  </>
-                ) : (
-                  <FormGroup>
-                    <Label for="exampleSelect">Coffe Type</Label>
-                    <Input
-                      type="select"
-                      name="name"
-                      id="exampleSelect"
-                      onChange={handleChange}
-                      defaultValue={editable?.name}
-                    >
-                      <option>Select Coffe Type</option>
-                      {coffees.map((coffe) => (
-                        <option key={coffe.id} value={coffe.name}>
-                          {coffe.name}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                )}
+                <FormGroup>
+                  <Label for="exampleSelect">Coffe Type</Label>
+                  <Input
+                    type="select"
+                    name="name"
+                    id="exampleSelect"
+                    onChange={handleChange}
+                    defaultValue={item.name}
+                  >
+                    <option>Select Coffe Type</option>
+                    {coffees.map((coffe) => (
+                      <option key={coffe.id} value={coffe.name}>
+                        {coffe.name}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
               </Col>
               <Col md="6">
                 <FormGroup>
@@ -164,7 +127,7 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
                     name="count"
                     id="count"
                     onChange={handleChange}
-                    defaultValue={editable?.count}
+                    defaultValue={item.count}
                     placeholder="Write Count"
                   />
                 </FormGroup>
@@ -177,38 +140,24 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
                     type="textarea"
                     name="special"
                     id="special"
-                    defaultValue={editable?.special}
+                    defaultValue={item.special}
                     onChange={handleChange}
                   />
                 </FormGroup>
               </Col>
 
               <Col md="6" style={{ marginTop: "80px" }}>
-                {editable ? (
-                  <FormGroup>
-                    <Label for="price">Special Notes</Label>
-                    <Input
-                      type="text"
-                      name="price"
-                      id="price"
-                      disabled
-                      value={editable?.price * editable?.count}
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
-                ) : (
-                  <FormGroup>
-                    <Label for="price">Special Notes</Label>
-                    <Input
-                      type="text"
-                      name="price"
-                      id="price"
-                      disabled
-                      value={Number(inputVal.count) * Number(inputVal.price)}
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
-                )}
+                <FormGroup>
+                  <Label for="price">Special Notes</Label>
+                  <Input
+                    type="text"
+                    name="price"
+                    id="price"
+                    disabled
+                    value={Number(inputVal.count) * Number(inputVal.price)}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
               </Col>
 
               <Col md="6" style={{ marginTop: "105px" }}>
@@ -218,7 +167,7 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
                   color="primary"
                   onClick={handleSubmit}
                 >
-                  {format} Order
+                  Edit Order
                 </Button>
               </Col>
             </Row>
@@ -229,4 +178,4 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
   );
 }
 
-export default ModalOrder;
+export default EditOrder;
