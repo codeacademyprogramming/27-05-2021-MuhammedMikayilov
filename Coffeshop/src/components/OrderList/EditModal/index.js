@@ -31,6 +31,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function EditOrder({ item }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [inputVal, setInputVal] = React.useState({
     name: item?.name,
     count: item?.count,
@@ -46,7 +47,7 @@ function EditOrder({ item }) {
 
   const handleSubmit = () => {
     const updateOrderList = updateOrder(dispatch);
-    updateOrderList(item.id, inputVal);
+    updateOrderList(item.id, inputVal, setLoading);
     setOpen(false);
   };
 

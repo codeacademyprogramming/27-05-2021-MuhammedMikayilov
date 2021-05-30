@@ -1,13 +1,17 @@
 import { orderService } from "../../Service/Order";
 import * as actionTypes from "./actionTypes";
 
-const getOrderList = () => (dispatch) => {
-  orderService.getOrderList().then(({ data }) => {
-    dispatch({
-      type: actionTypes.GET_ORDER_LIST,
-      payload: data,
-    });
-  });
+const getOrderList = (loading) => (dispatch) => {
+  loading(true);
+  orderService
+    .getOrderList()
+    .then(({ data }) => {
+      dispatch({
+        type: actionTypes.GET_ORDER_LIST,
+        payload: data,
+      });
+    })
+    .then(() => loading(false));
 };
 
 export default getOrderList;
@@ -24,7 +28,7 @@ export const addOrderList = (dispatch) => (data) => {
     .then(() => dispatch(getOrderList()));
 };
 
-export const updateOrderItem = (dispatch) => (id, data) => {
+export const updateOrderItem = (dispatch) => (id, data, loading) => {
   orderService
     .putOrderList(id, data)
     .then(() => {
@@ -33,10 +37,10 @@ export const updateOrderItem = (dispatch) => (id, data) => {
         payload: data,
       });
     })
-    .then(() => dispatch(getOrderList()))
+    .then(() => dispatch(getOrderList(loading)))
     .catch((err) => console.log(err));
 };
-export const updateOrder = (dispatch) => (id, data) => {
+export const updateOrder = (dispatch) => (id, data, setLoading) => {
   orderService
     .putOrderList(id, data)
     .then(() => {
@@ -45,6 +49,6 @@ export const updateOrder = (dispatch) => (id, data) => {
         payload: data,
       });
     })
-    .then(() => dispatch(getOrderList()))
+    .then(() => dispatch(getOrderList(setLoading)))
     .catch((err) => console.log(err));
 };
