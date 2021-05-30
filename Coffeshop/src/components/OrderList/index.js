@@ -8,12 +8,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import ModalOrder from "./CreateModal";
-import { Box, Button, CircularProgress, Typography } from "@material-ui/core";
+import { Box, CircularProgress, Typography } from "@material-ui/core";
 import getOrderList, {
   updateOrderItem,
 } from "../../redux/actions/ordersAction";
 import { useDispatch, useSelector } from "react-redux";
 import EditOrder from "./EditModal";
+import { Form, FormGroup, Label, Input, Row, Col } from "reactstrap";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -41,32 +42,49 @@ const useStyles = makeStyles({
 
 function OrderList() {
   const classes = useStyles();
-  const [edit, setEdit] = React.useState(false);
+  const [, setEdit] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  const [sorted, setSorted] = React.useState(true);
   const dispatch = useDispatch();
-  const { orders } = useSelector((state) => state.order);
+  let { orders } = useSelector((state) => state.order);
 
-  const changeStatusClick = (item) => {
-    const updateOrder = updateOrderItem(dispatch);
-    if (item.status === "CREATED") {
-      updateOrder(
-        item.id,
-        {
-          status: "IN_PROGRESS",
-        },
-        setLoading
-      );
-    }
-    if (item.status === "IN_PROGRESS") {
-      updateOrder(
-        item.id,
-        {
-          status: "DONE",
-        },
-        setLoading
-      );
-    }
+  const handleSort = () => {
+    orders.sort((a, b) => {
+      if (a.status < b.status) {
+        return -1;
+      } else if (a.status === b.status) {
+        return 0;
+      } else {
+        return 1;
+      }
+    });
+    setSorted(!sorted);
+    console.log(sorted);
   };
+  const changeStatusClick = React.useCallback(
+    (item) => {
+      const updateOrder = updateOrderItem(dispatch);
+      if (item.status === "CREATED") {
+        updateOrder(
+          item.id,
+          {
+            status: "IN_PROGRESS",
+          },
+          setLoading
+        );
+      }
+      if (item.status === "IN_PROGRESS") {
+        updateOrder(
+          item.id,
+          {
+            status: "DONE",
+          },
+          setLoading
+        );
+      }
+    },
+    [setLoading, dispatch]
+  );
 
   React.useEffect(() => {
     getOrderList(setLoading)(dispatch);
@@ -78,12 +96,36 @@ function OrderList() {
           Order List
         </Typography>
       </Box>
-      <Box marginBottom="20px">
-        <ModalOrder title="Create new Order" coffeType={null} format="Create" />
+      <Box>
+        <Row justifycontent="end">
+          <Col md="6" className="mt-4">
+            <ModalOrder
+              title="Create new Order"
+              coffeType={null}
+              format="Create"
+            />
+          </Col>
+          <Col md="3" className="offset-3">
+            <Typography
+              onClick={handleSort}
+              style={{
+                cursor: "pointer",
+                paddingTop: "36px",
+                textAlign: "end",
+              }}
+            >
+              Sort by Status
+            </Typography>
+          </Col>
+        </Row>
       </Box>
       <Box>
         {loading ? (
-          <Box display="flex" justifyContent="center">
+          <Box
+            display="flex"
+            className="justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
             <CircularProgress />
           </Box>
         ) : (
@@ -96,7 +138,9 @@ function OrderList() {
                   <StyledTableCell align="right">Order Count</StyledTableCell>
                   <StyledTableCell align="right">Special Notes</StyledTableCell>
                   <StyledTableCell align="right">Order Price</StyledTableCell>
-                  <StyledTableCell align="right">Order STATUS</StyledTableCell>
+                  <StyledTableCell align="right" onClick={handleSort}>
+                    Order STATUS
+                  </StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -5,14 +5,12 @@ import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import Slide from "@material-ui/core/Slide";
 import { Box, FormGroup } from "@material-ui/core";
 import getCoffeList from "../../../redux/actions/coffeListAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Form, Label, Input } from "reactstrap";
 import { updateOrder } from "../../../redux/actions/ordersAction";
-import { useHistory } from "react-router";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
@@ -31,7 +29,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function EditOrder({ item }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [, setLoading] = React.useState(false);
   const [inputVal, setInputVal] = React.useState({
     name: item?.name,
     count: item?.count,
@@ -39,8 +37,6 @@ function EditOrder({ item }) {
     price: item?.price,
     status: item?.status,
   });
-  const history = useHistory();
-
   const handleClickOpen = () => {
     setOpen(true);
   };

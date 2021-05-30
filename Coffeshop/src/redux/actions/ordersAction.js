@@ -16,7 +16,7 @@ const getOrderList = (loading) => (dispatch) => {
 
 export default getOrderList;
 
-export const addOrderList = (dispatch) => (data) => {
+export const addOrderList = (dispatch) => (data, setLoading) => {
   orderService
     .addOrderToList(data)
     .then((resp) => {
@@ -25,10 +25,10 @@ export const addOrderList = (dispatch) => (data) => {
         payload: data,
       });
     })
-    .then(() => dispatch(getOrderList()));
+    .then(() => dispatch(getOrderList(setLoading)));
 };
 
-export const updateOrderItem = (dispatch) => (id, data, loading) => {
+export const updateOrderItem = (dispatch) => (id, data, setLoading) => {
   orderService
     .putOrderList(id, data)
     .then(() => {
@@ -37,7 +37,7 @@ export const updateOrderItem = (dispatch) => (id, data, loading) => {
         payload: data,
       });
     })
-    .then(() => dispatch(getOrderList(loading)))
+    .then(() => dispatch(getOrderList(setLoading)))
     .catch((err) => console.log(err));
 };
 export const updateOrder = (dispatch) => (id, data, setLoading) => {

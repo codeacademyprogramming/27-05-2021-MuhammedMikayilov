@@ -31,6 +31,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function ModalOrder({ title, coffeType, format, editable, edit }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [, setLoading] = React.useState(true);
   const [inputVal, setInputVal] = React.useState({
     name: "",
     count: 0,
@@ -47,10 +48,10 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
   const handleSubmit = () => {
     if (edit) {
       const updateOrderList = updateOrder(dispatch);
-      updateOrderList(editable.id, inputVal);
+      updateOrderList(editable.id, inputVal, setLoading);
     } else {
       const addOrder = addOrderList(dispatch);
-      addOrder(inputVal);
+      addOrder(inputVal, setLoading);
       history.push("/");
     }
     setOpen(false);
@@ -58,16 +59,6 @@ function ModalOrder({ title, coffeType, format, editable, edit }) {
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-
-    // setInputVal({
-    //   ...inputVal,
-    //   name: editable?.name,
-    //   count: editable?.count,
-    //   special: editable?.special,
-    //   price: editable?.price,
-    //   status: editable?.status,
-    // });
-
     setInputVal({ ...inputVal, [name]: value });
     if (name === "name") {
       let price = coffees.find((coffe) => coffe.name === value).price;

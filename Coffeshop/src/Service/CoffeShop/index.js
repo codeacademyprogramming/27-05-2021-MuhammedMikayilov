@@ -2,11 +2,11 @@ import { HttpClient } from "../../HttpClient";
 
 class CoffeList extends HttpClient {
   constructor() {
-    super("https://isko88.github.io");
+    super("https://60a8e41820a6410017306677.mockapi.io/api");
   }
 
   getCoffeList() {
-    return this.get("coffee.json");
+    return this.get("coffeshop");
   }
 }
 

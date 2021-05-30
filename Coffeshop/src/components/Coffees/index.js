@@ -61,7 +61,6 @@ function Coffees() {
                 <ModalOrder
                   title="Order this coffe"
                   coffeType={coffe}
-                  editable={null}
                   format="Create"
                 />
               </CardActions>
