@@ -22,6 +22,19 @@ const orderReducer = (state = { orders: [] }, action) => {
           return order;
         }),
       };
+    case actionTypes.UPDATE_ORDER_LIST:
+      return {
+        ...state.orders,
+        orders: state.orders.map((order) => {
+          console.log(action.payload, order);
+          if (order.id === action.payload.id) {
+            return {
+              ...action.payload,
+            };
+          }
+          return { ...order };
+        }),
+      };
     default:
       return state;
   }

@@ -11,7 +11,7 @@ import { Box, FormGroup } from "@material-ui/core";
 import getCoffeList from "../../../redux/actions/coffeListAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Form, Label, Input } from "reactstrap";
-import { addOrderList } from "../../../redux/actions/ordersAction";
+import { addOrderList, updateOrder } from "../../../redux/actions/ordersAction";
 import { useHistory } from "react-router";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
@@ -28,11 +28,11 @@ const useStyles = makeStyles((theme) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-function ModalOrder({ title, coffeType, format }) {
+function ModalOrder({ title, coffeType, format, editable, edit }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [inputVal, setInputVal] = React.useState({
-    name: "Black",
+    name: "",
     count: 0,
     special: "",
     price: 0,
@@ -45,14 +45,28 @@ function ModalOrder({ title, coffeType, format }) {
   };
 
   const handleSubmit = () => {
-    const addOrder = addOrderList(dispatch);
-    addOrder(inputVal);
-    history.push("/");
+    if (edit) {
+      const updateOrderList = updateOrder(dispatch);
+      updateOrderList(editable.id, inputVal);
+    } else {
+      const addOrder = addOrderList(dispatch);
+      addOrder(inputVal);
+      history.push("/");
+    }
     setOpen(false);
   };
 
   const handleChange = (e) => {
     const { value, name } = e.target;
+
+    // setInputVal({
+    //   ...inputVal,
+    //   name: editable?.name,
+    //   count: editable?.count,
+    //   special: editable?.special,
+    //   price: editable?.price,
+    //   status: editable?.status,
+    // });
 
     setInputVal({ ...inputVal, [name]: value });
     if (name === "name") {
@@ -66,6 +80,22 @@ function ModalOrder({ title, coffeType, format }) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
+    if (edit && open) {
+      console.log("editable", editable);
+    }
+    // if (edit) {
+    //   setInputVal({
+    //     ...inputVal,
+    //     name: editable.name,
+    //     count: editable.count,
+    //     special: editable.special,
+    //     price: editable.price,
+    //     status: editable.status,
+    //   });
+    // }
+  }, []);
+
+  React.useEffect(() => {
     if (coffeType !== null) {
       setInputVal({
         ...inputVal,
@@ -73,6 +103,7 @@ function ModalOrder({ title, coffeType, format }) {
         price: coffeType.price,
       });
     }
+
     getCoffeList()(dispatch);
   }, [coffeType, dispatch]);
 
@@ -99,9 +130,7 @@ function ModalOrder({ title, coffeType, format }) {
             >
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              {format}
-            </Typography>
+            <Typography variant="h6">{format}</Typography>
             <Button autoFocus color="inherit" onClick={handleSubmit}>
               {format} Order
             </Button>
@@ -131,9 +160,13 @@ function ModalOrder({ title, coffeType, format }) {
                       name="name"
                       id="exampleSelect"
                       onChange={handleChange}
+                      defaultValue={editable?.name}
                     >
+                      <option>Select Coffe Type</option>
                       {coffees.map((coffe) => (
-                        <option key={coffe.id}>{coffe.name}</option>
+                        <option key={coffe.id} value={coffe.name}>
+                          {coffe.name}
+                        </option>
                       ))}
                     </Input>
                   </FormGroup>
@@ -147,6 +180,7 @@ function ModalOrder({ title, coffeType, format }) {
                     name="count"
                     id="count"
                     onChange={handleChange}
+                    defaultValue={editable?.count}
                     placeholder="Write Count"
                   />
                 </FormGroup>
@@ -159,33 +193,48 @@ function ModalOrder({ title, coffeType, format }) {
                     type="textarea"
                     name="special"
                     id="special"
+                    defaultValue={editable?.special}
                     onChange={handleChange}
                   />
                 </FormGroup>
               </Col>
 
               <Col md="6" style={{ marginTop: "80px" }}>
-                <FormGroup>
-                  <Label for="price">Special Notes</Label>
-                  <Input
-                    type="text"
-                    name="price"
-                    id="price"
-                    disabled
-                    value={Number(inputVal.count) * Number(inputVal.price)}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
+                {editable ? (
+                  <FormGroup>
+                    <Label for="price">Special Notes</Label>
+                    <Input
+                      type="text"
+                      name="price"
+                      id="price"
+                      disabled
+                      value={editable?.price * editable?.count}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                ) : (
+                  <FormGroup>
+                    <Label for="price">Special Notes</Label>
+                    <Input
+                      type="text"
+                      name="price"
+                      id="price"
+                      disabled
+                      value={Number(inputVal.count) * Number(inputVal.price)}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                )}
               </Col>
 
-              <Col md="6" style={{ marginTop: "80px" }}>
+              <Col md="6" style={{ marginTop: "105px" }}>
                 <Button
                   variant="contained"
                   autoFocus
                   color="primary"
                   onClick={handleSubmit}
                 >
-                  Create Order
+                  {format} Order
                 </Button>
               </Col>
             </Row>

@@ -40,6 +40,7 @@ const useStyles = makeStyles({
 
 function OrderList() {
   const classes = useStyles();
+  const [edit, setEdit] = React.useState(false);
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.order);
 
@@ -63,13 +64,7 @@ function OrderList() {
   return (
     <Box width="1024px" margin="0 auto" paddingTop="50px">
       <Box>
-        <Typography
-          variant="h2"
-          className="text-center"
-          onClick={() => {
-            console.log(orders);
-          }}
-        >
+        <Typography variant="h2" className="text-center">
           Order List
         </Typography>
       </Box>
@@ -99,31 +94,47 @@ function OrderList() {
                   <StyledTableCell align="right">{row.count}</StyledTableCell>
                   <StyledTableCell align="right">{row.special}</StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.price} Azn
+                    {row.price * row.count} Azn
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    <Typography
-                      variant="body2"
-                      className={`${
-                        row.status === "CREATED"
-                          ? "text-success"
-                          : row.status === "IN_PROGRESS"
-                          ? "text-info"
-                          : "text-danger"
-                      } status_order`}
+                    <Typography variant="body2">
+                      {row.status !== "DONE" && (
+                        <Box
+                          display="inline-block"
+                          marginRight="20px"
+                          onClick={() => setEdit(true)}
+                        >
+                          <ModalOrder
+                            title="Edit"
+                            coffeType={null}
+                            format="Edit"
+                            editable={row}
+                            edit={edit}
+                          />
+                        </Box>
+                      )}
+                      <Typography
+                        variant="body2"
+                        className={`${
+                          row.status === "CREATED"
+                            ? "text-success"
+                            : row.status === "IN_PROGRESS"
+                            ? "text-info"
+                            : "text-danger"
+                        } `}
+                        onClick={() => changeStatusClick(row)}
+                      >
+                        {row.status}
+                      </Typography>
+                    </Typography>
+                    <Box
+                      display="inline-block"
+                      className="status_order text-primary"
+                      marginLeft="20px"
                       onClick={() => changeStatusClick(row)}
                     >
-                      {row.status !== "DONE" && (
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          className="me-3"
-                        >
-                          Edit
-                        </Button>
-                      )}
-                      {row.status}
-                    </Typography>
+                      {row.status !== "DONE" && "Change Status"}
+                    </Box>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
