@@ -1,9 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
 
-const initial = {
-  status: "",
-};
-
 const orderReducer = (state = { orders: [] }, action) => {
   switch (action.type) {
     case actionTypes.GET_ORDER_LIST:
@@ -12,6 +8,19 @@ const orderReducer = (state = { orders: [] }, action) => {
       return {
         ...state.orders,
         orders: [...state.orders, action.payload],
+      };
+    case actionTypes.UPDATE_STATUS:
+      return {
+        ...state.orders,
+        orders: state.orders.map((order) => {
+          if (order.id === action.payload.id) {
+            return {
+              ...action.payload,
+              status: action.payload,
+            };
+          }
+          return order;
+        }),
       };
     default:
       return state;

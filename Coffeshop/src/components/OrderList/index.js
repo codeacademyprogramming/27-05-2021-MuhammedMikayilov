@@ -9,7 +9,9 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import ModalOrder from "./CreateModal";
 import { Box, Button, Typography } from "@material-ui/core";
-import getOrderList from "../../redux/actions/ordersAction";
+import getOrderList, {
+  updateOrderItem,
+} from "../../redux/actions/ordersAction";
 import { useDispatch, useSelector } from "react-redux";
 
 const StyledTableCell = withStyles((theme) => ({
@@ -30,18 +32,6 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
 const useStyles = makeStyles({
   table: {
     minWidth: 700,
@@ -50,14 +40,26 @@ const useStyles = makeStyles({
 
 function OrderList() {
   const classes = useStyles();
-
   const dispatch = useDispatch();
-
   const { orders } = useSelector((state) => state.order);
+
+  const changeStatusClick = (item) => {
+    const updateOrder = updateOrderItem(dispatch);
+    if (item.status === "CREATED") {
+      updateOrder(item.id, {
+        status: "IN_PROGRESS",
+      });
+    }
+    if (item.status === "IN_PROGRESS") {
+      updateOrder(item.id, {
+        status: "DONE",
+      });
+    }
+  };
 
   React.useEffect(() => {
     getOrderList()(dispatch);
-  }, []);
+  }, [dispatch]);
   return (
     <Box width="1024px" margin="0 auto" paddingTop="50px">
       <Box>
@@ -89,7 +91,7 @@ function OrderList() {
             </TableHead>
             <TableBody>
               {orders.map((row, idx) => (
-                <StyledTableRow key={row.name}>
+                <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     {idx + 1}
                   </StyledTableCell>
@@ -105,9 +107,21 @@ function OrderList() {
                       className={`${
                         row.status === "CREATED"
                           ? "text-success"
+                          : row.status === "IN_PROGRESS"
+                          ? "text-info"
                           : "text-danger"
-                      }`}
+                      } status_order`}
+                      onClick={() => changeStatusClick(row)}
                     >
+                      {row.status !== "DONE" && (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          className="me-3"
+                        >
+                          Edit
+                        </Button>
+                      )}
                       {row.status}
                     </Typography>
                   </StyledTableCell>

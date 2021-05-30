@@ -1,5 +1,5 @@
 // Bootstrap scss
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 // Variables
 @import "./utils/variables";
@@ -7,6 +7,9 @@
 // Utils
 @import "./utils/index";
 
+.status_order {
+  cursor: pointer;
+}
 
 // body {
 //   background-color: $body-color;

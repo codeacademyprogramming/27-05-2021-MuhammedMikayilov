@@ -19,7 +19,6 @@ function App() {
         <Route path="/coffees" exact>
           <Coffees />
         </Route>
-
         <Redirect to="/" />
       </Switch>
     </Router>

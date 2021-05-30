@@ -6,11 +6,15 @@ class OrderService extends HttpClient {
   }
 
   getOrderList() {
-    return this.get("orders");
+    return this.get("orderListCrud");
   }
 
   addOrderToList(body) {
-    return this.post("orders", body);
+    return this.post("orderListCrud", body);
+  }
+
+  putOrderList(id, body) {
+    return this.put("orderListCrud", id, body);
   }
 }
 

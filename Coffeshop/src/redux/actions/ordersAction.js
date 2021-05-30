@@ -20,3 +20,16 @@ export const addOrderList = (dispatch) => (data) => {
     });
   });
 };
+
+export const updateOrderItem = (dispatch) => (id, data) => {
+  orderService
+    .putOrderList(id, data)
+    .then(() => {
+      dispatch({
+        type: actionTypes.UPDATE_STATUS,
+        payload: data,
+      });
+    })
+    .then(() => dispatch(getOrderList()))
+    .catch((err) => console.log(err));
+};

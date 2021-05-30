@@ -63,7 +63,6 @@ function ModalOrder({ title, coffeType, format }) {
       setInputVal({ ...inputVal, count: Number(value) });
     }
   };
-
   const dispatch = useDispatch();
 
   React.useEffect(() => {

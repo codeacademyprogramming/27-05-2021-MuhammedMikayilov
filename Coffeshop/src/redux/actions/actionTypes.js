@@ -2,11 +2,4 @@ export const GET_COFFE_LIST = "GET_COFFE_LIST";
 
 export const GET_ORDER_LIST = "GET_ORDER_LIST";
 export const CREATE_ORDER_LIST = "CREATE_ORDER_LIST";
-export const UPDATE_ORDER_LIST = "UPDATE_ORDER_LIST";
-
-export const ASYNC_STATUS = {
-  IDLE: "IDLE",
-  LOADING: "LOADING",
-  SUCCESS: "SUCCESS",
-  ERROR: "ERROR",
-};
+export const UPDATE_STATUS = "UPDATE_STATUS";
